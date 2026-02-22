@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm install tailwindcss-animate 2>&1)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm install 2>&1)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npx prisma generate 2>&1)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npx prisma db push 2>&1)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm run build 2>&1)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm install autoprefixer --save-dev 2>&1 | tail -5)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/thanks?email=test@test.com\" && echo \"\"\ncurl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/api/admin/export?token=wrong-token\" && echo \"\"\ncurl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/api/admin/export?token=change-me-in-production\" && echo \"\")",
+      "Bash(curl -s \"http://localhost:3000/api/admin/export?token=change-me-in-production\" | head -3)",
+      "Bash(pkill -f \"next dev\" 2>/dev/null || true)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm install -D @netlify/plugin-nextjs 2>&1 | tail -5)",
+      "Bash(find \"/Users/kokoaung/Desktop/App Launch OS\" -name \"*.png\" -o -name \"*.ico\" -o -name \"*.svg\" -o -name \"favicon*\" -o -name \"launch_owl*\" 2>/dev/null | grep -v node_modules | grep -v .next | sort)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm run build 2>&1 | tail -20)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && rm -rf .next && npm run dev)"
+    ]
+  }
+}
