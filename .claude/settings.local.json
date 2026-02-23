@@ -13,7 +13,8 @@
       "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm install -D @netlify/plugin-nextjs 2>&1 | tail -5)",
       "Bash(find \"/Users/kokoaung/Desktop/App Launch OS\" -name \"*.png\" -o -name \"*.ico\" -o -name \"*.svg\" -o -name \"favicon*\" -o -name \"launch_owl*\" 2>/dev/null | grep -v node_modules | grep -v .next | sort)",
       "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm run build 2>&1 | tail -20)",
-      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && rm -rf .next && npm run dev)"
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && rm -rf .next && npm run dev)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm run build 2>&1 | tail -15)"
     ]
   }
 }
