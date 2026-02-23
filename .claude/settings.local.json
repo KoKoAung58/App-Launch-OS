@@ -17,7 +17,13 @@
       "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm run build 2>&1 | tail -15)",
       "WebFetch(domain:ntl.fyi)",
       "WebFetch(domain:opennext.js.org)",
-      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm run build 2>&1 | tail -12)"
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm run build 2>&1 | tail -12)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && npm install next@latest 2>&1)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && rm -rf .next && npm run build 2>&1)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && git rm -r --cached .next 2>&1 | tail -5 && echo \"done\")",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && git add .gitignore package.json package-lock.json tsconfig.json next-env.d.ts && git status --short)",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && git commit -m \"$\\(cat <<'EOF'\nUpgrade Next.js to 16.1.6, fix CVE-2025-55182, remove .next from repo\n\n- Upgrade next from 15.0.4 to ^16.1.6 to resolve critical security\n  vulnerability CVE-2025-55182 that was blocking Netlify deploys\n- Add .next, .env, .env.local to .gitignore to prevent build artifacts\n  from being tracked in version control\n- Remove previously committed .next build artifacts from the repo\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(cd \"/Users/kokoaung/Desktop/App Launch OS\" && git push origin main 2>&1)"
     ]
   }
 }
