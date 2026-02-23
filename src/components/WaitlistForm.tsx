@@ -25,22 +25,6 @@ import {
 } from "@/lib/validations";
 import { cn } from "@/lib/utils";
 
-// ─── Encode object → application/x-www-form-urlencoded ───────────────────────
-function encode(data: Record<string, string | string[] | boolean>): string {
-  const parts: string[] = [];
-  for (const [key, value] of Object.entries(data)) {
-    if (Array.isArray(value)) {
-      for (const v of value) {
-        parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(v)}`);
-      }
-    } else {
-      parts.push(
-        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`
-      );
-    }
-  }
-  return parts.join("&");
-}
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -134,16 +118,10 @@ export function WaitlistForm() {
     setStatus("loading");
 
     try {
-      const res = await fetch("/__forms.html", {
+      const res = await fetch("/api/waitlist", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encode({
-          "form-name": "waitlist",
-          "bot-field": "", // honeypot
-          ...values,
-          consent: String(values.consent),
-          interestedFeatures: values.interestedFeatures,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
       });
 
       if (!res.ok) throw new Error(`Status ${res.status}`);
@@ -207,14 +185,6 @@ export function WaitlistForm() {
             className="glass-card rounded-2xl p-6 md:p-8 space-y-6"
             noValidate
           >
-            {/* Honeypot — hidden from real users, catches bots */}
-            <div className="hidden" aria-hidden="true">
-              <label>
-                Don&apos;t fill this out
-                <input name="bot-field" tabIndex={-1} autoComplete="off" />
-              </label>
-            </div>
-
             {/* ── Name + Email ── */}
             <div className="grid sm:grid-cols-2 gap-4">
               <div
