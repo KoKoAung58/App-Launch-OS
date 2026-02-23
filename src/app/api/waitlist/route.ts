@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
-import { waitlistSchema, type WaitlistFormData } from "@/lib/validations";
+import { waitlistSchema } from "@/lib/validations";
 
 export async function POST(request: Request) {
   try {
@@ -14,59 +13,63 @@ export async function POST(request: Request) {
       );
     }
 
-    const data: WaitlistFormData = result.data;
+    const data = result.data;
 
-    await sendNotification(data);
+    // Netlify sets process.env.URL to the site's primary URL on every deploy.
+    // We use it to make a server-side POST that Netlify's CDN can intercept
+    // for form processing — bypassing the client-side routing issue with OpenNext.
+    const siteUrl = process.env.URL;
 
+    if (!siteUrl) {
+      // Local dev: log the data so submissions aren't silently lost
+      console.log("[waitlist] Local dev — submission not forwarded to Netlify Forms:");
+      console.log(JSON.stringify(data, null, 2));
+      return NextResponse.json({ success: true });
+    }
+
+    // Build a form-encoded body (Netlify Forms requires this format)
+    const params = new URLSearchParams();
+    params.append("form-name", "waitlist");
+    params.append("fullName", data.fullName);
+    params.append("email", data.email);
+    params.append("role", data.role);
+    params.append("building", data.building);
+    params.append("launchStage", data.launchStage);
+    params.append("biggestPain", data.biggestPain);
+    for (const f of data.interestedFeatures) {
+      params.append("interestedFeatures", f);
+    }
+    if (data.launchDate)     params.append("launchDate", data.launchDate);
+    if (data.timezone)       params.append("timezone", data.timezone);
+    if (data.twitterHandle)  params.append("twitterHandle", data.twitterHandle);
+    params.append("consent", String(data.consent));
+    if (data.ref)            params.append("ref", data.ref);
+    if (data.utmSource)      params.append("utmSource", data.utmSource);
+    if (data.utmMedium)      params.append("utmMedium", data.utmMedium);
+    if (data.utmCampaign)    params.append("utmCampaign", data.utmCampaign);
+    if (data.utmContent)     params.append("utmContent", data.utmContent);
+    if (data.utmTerm)        params.append("utmTerm", data.utmTerm);
+
+    // Server-side fetch → goes out through Netlify's CDN, which intercepts
+    // the POST to /__forms.html and saves it under the registered form.
+    const netlifyRes = await fetch(`${siteUrl}/__forms.html`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    });
+
+    if (!netlifyRes.ok) {
+      console.error(
+        `[waitlist] Netlify Forms returned ${netlifyRes.status}:`,
+        await netlifyRes.text()
+      );
+      throw new Error(`Netlify Forms returned ${netlifyRes.status}`);
+    }
+
+    console.log(`[waitlist] Saved to Netlify Forms: ${data.email}`);
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Waitlist submission error:", error);
+    console.error("[waitlist] Submission error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
-
-async function sendNotification(data: WaitlistFormData) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.NOTIFICATION_EMAIL;
-
-  if (!apiKey || !to) {
-    // Log to server console so submissions aren't silently lost during dev
-    console.log("=== NEW WAITLIST SIGNUP ===");
-    console.log(JSON.stringify(data, null, 2));
-    console.log("Set RESEND_API_KEY + NOTIFICATION_EMAIL to get email alerts.");
-    return;
-  }
-
-  const resend = new Resend(apiKey);
-
-  const featureList = data.interestedFeatures.join(", ");
-  const utm = [
-    data.utmSource && `source=${data.utmSource}`,
-    data.utmMedium && `medium=${data.utmMedium}`,
-    data.utmCampaign && `campaign=${data.utmCampaign}`,
-    data.ref && `ref=${data.ref}`,
-  ]
-    .filter(Boolean)
-    .join(", ");
-
-  await resend.emails.send({
-    from: process.env.FROM_EMAIL ?? "App Launch OS <waitlist@resend.dev>",
-    to,
-    subject: `🚀 New waitlist signup: ${data.fullName}`,
-    text: `
-New waitlist signup for App Launch OS
-======================================
-Name:          ${data.fullName}
-Email:         ${data.email}
-Role:          ${data.role}
-Building:      ${data.building}
-Launch stage:  ${data.launchStage}
-Biggest pain:  ${data.biggestPain}
-Features:      ${featureList}
-Launch date:   ${data.launchDate || "—"}
-Twitter:       ${data.twitterHandle || "—"}
-Timezone:      ${data.timezone || "—"}
-UTM:           ${utm || "—"}
-    `.trim(),
-  });
 }
