@@ -8,7 +8,13 @@ const inter = Inter({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://applauncos.com";
+// NEXT_PUBLIC_SITE_URL → custom domain (set in Netlify env vars when ready)
+// URL → Netlify automatically sets this to the deployed site URL (e.g. https://applaunchos.netlify.app)
+// Fallback is used only in local dev
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.URL ??
+  "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
