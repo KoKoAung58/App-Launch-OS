@@ -1,6 +1,5 @@
 import { ImageResponse } from "next/og";
 
-export const runtime = "edge";
 export const alt = "App Launch OS — Stop shipping to crickets";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -126,10 +125,7 @@ export default function OgImage() {
                 style={{
                   fontSize: "78px",
                   fontWeight: 900,
-                  background:
-                    "linear-gradient(90deg, #3b82f6 0%, #818cf8 55%, #c084fc 100%)",
-                  backgroundClip: "text",
-                  color: "transparent",
+                  color: "#818cf8",
                   lineHeight: 1.0,
                   letterSpacing: "-0.04em",
                 }}
